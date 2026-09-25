@@ -14,737 +14,521 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("📊 F&O SMA20 Breakout / Breakdown Candidate Scanner")
+st.title("📊 F&O SMA20 Candidate Scanner")
+
 st.caption(
-    "2-Minute Candidate + 5-Minute Candidate | "
-    "Batch Download | 50% Body | Duplicate Signal Control"
+    "2-Minute & 5-Minute Candle Breakout / Breakdown Scanner"
 )
 
 # ============================================================
-# F&O STOCK UNIVERSE
+# F&O STOCK LIST
 # ============================================================
 
 FO_STOCKS = [
-    "ABB", "ABCAPITAL", "ABFRL", "ADANIENT", "ADANIPORTS",
-    "ALKEM", "AMBER", "AMBUJACEM", "ANGELONE", "APLAPOLLO",
-    "APOLLOHOSP", "ASHOKLEY", "ASIANPAINT", "ASTRAL", "ATGL",
-    "AUROPHARMA", "AXISBANK", "BAJAJ-AUTO", "BAJAJFINSV",
-    "BAJFINANCE", "BALKRISIND", "BANDHANBNK", "BANKBARODA",
-    "BANKINDIA", "BATAINDIA", "BDL", "BEL", "BERGEPAINT",
-    "BHARATFORG", "BHARTIARTL", "BHEL", "BIOCON", "BOSCHLTD",
-    "BPCL", "BRITANNIA", "BSOFT", "CANBK", "CDSL", "CGPOWER",
-    "CHAMBLFERT", "CHOLAFIN", "CIPLA", "COALINDIA", "COFORGE",
-    "COLPAL", "CONCOR", "CROMPTON", "CUMMINSIND", "CYIENT",
-    "DABUR", "DALBHARAT", "DEEPAKNTR", "DELHIVERY", "DIVISLAB",
-    "DIXON", "DLF", "DRREDDY", "EICHERMOT", "ETERNAL",
-    "EXIDEIND", "FEDERALBNK", "FORTIS", "GAIL", "GLENMARK",
-    "GODREJCP", "GODREJPROP", "GRANULES", "GRASIM", "HAL",
-    "HAVELLS", "HCLTECH", "HDFCAMC", "HDFCBANK", "HDFCLIFE",
-    "HEROMOTOCO", "HFCL", "HINDALCO", "HINDCOPPER", "HINDPETRO",
-    "HINDUNILVR", "HUDCO", "ICICIBANK", "ICICIGI", "ICICIPRULI",
-    "IDEA", "IDFCFIRSTB", "IEX", "IGL", "INDHOTEL", "INDIAMART",
-    "INDIANB", "INDIGO", "INDUSTOWER", "INFY", "INOXWIND",
-    "IOC", "IRCTC", "IREDA", "IRFC", "ITC", "JINDALSTEL",
-    "JIOFIN", "JSWENERGY", "JSWSTEEL", "JUBLFOOD", "KALYANKJIL",
-    "KEI", "KOTAKBANK", "KPITTECH", "LAURUSLABS", "LICHSGFIN",
-    "LICI", "LODHA", "LT", "LTF", "LTIM", "LUPIN", "M&M",
-    "MANAPPURAM", "MANKIND", "MARICO", "MARUTI", "MAXHEALTH",
-    "MCX", "MGL", "MOTHERSON", "MPHASIS", "MRF", "MUTHOOTFIN",
-    "NATIONALUM", "NAUKRI", "NBCC", "NCC", "NESTLEIND", "NHPC",
-    "NMDC", "NTPC", "NUVAMA", "OBEROIRLTY", "OFSS", "OIL",
-    "ONGC", "PAGEIND", "PATANJALI", "PAYTM", "PERSISTENT",
-    "PETRONET", "PFC", "PHOENIXLTD", "PIDILITIND", "PIIND",
-    "PNB", "POLYCAB", "POONAWALLA", "POWERGRID", "PRESTIGE",
-    "PVRINOX", "RBLBANK", "RECLTD", "RELIANCE", "RVNL", "SAIL",
-    "SAMMAANCAP", "SBICARD", "SBILIFE", "SBIN", "SHREECEM",
-    "SHRIRAMFIN", "SIEMENS", "SOLARINDS", "SONACOMS", "SRF",
-    "SUNPHARMA", "SUPREMEIND", "SUZLON", "SYNGENE", "TATACHEM",
-    "TATACONSUM", "TATAELXSI", "TATAMOTORS", "TATAPOWER",
-    "TATASTEEL", "TATATECH", "TCS", "TECHM", "TIINDIA", "TITAN",
-    "TORNTPHARM", "TORNTPOWER", "TRENT", "TVSMOTOR", "UBL",
-    "ULTRACEMCO", "UNOMINDA", "UNIONBANK", "UPL", "VEDL",
-    "VBL", "VOLTAS", "WIPRO", "YESBANK", "ZYDUSLIFE"
+    "ADANIENT", "ADANIPORTS", "APOLLOHOSP", "ASIANPAINT",
+    "AXISBANK", "BAJAJ-AUTO", "BAJAJFINSV", "BAJFINANCE",
+    "BEL", "BHARTIARTL", "BOSCHLTD", "BPCL",
+    "BRITANNIA", "CIPLA", "COALINDIA", "COLPAL",
+    "DRREDDY", "EICHERMOT", "ETERNAL", "EXIDEIND",
+    "GRASIM", "HCLTECH", "HDFCBANK", "HDFCLIFE",
+    "HEROMOTOCO", "HINDALCO", "HINDPETRO", "HINDUNILVR",
+    "ICICIBANK", "ICICIGI", "ICICIPRULI", "INDHOTEL",
+    "INDUSINDBK", "INFY", "IOC", "ITC",
+    "JINDALSTEL", "JIOFIN", "JSWSTEEL", "KOTAKBANK",
+    "LAURUSLABS", "LICHSGFIN", "LT", "LTIM",
+    "M&M", "MANAPPURAM", "MARUTI", "MAXHEALTH",
+    "MCX", "METROPOLIS", "MFSL", "MGL",
+    "MOTHERSON", "MUTHOOTFIN", "NATIONALUM", "NAUKRI",
+    "NESTLEIND", "NHPC", "NMDC", "NTPC",
+    "NYKAA", "ONGC", "PAGEIND", "PATANJALI",
+    "PAYTM", "PEL", "PERSISTENT", "PETRONET",
+    "PFC", "PHOENIXLTD", "PIDILITIND", "PIIND",
+    "PNB", "POLYCAB", "POWERGRID", "PRESTIGE",
+    "RBLBANK", "RECLTD", "RELIANCE", "SAIL",
+    "SBICARD", "SBILIFE", "SBIN", "SHREECEM",
+    "SHRIRAMFIN", "SIEMENS", "SOLARINDS", "SONACOMS",
+    "SRF", "SUNPHARMA", "SUPREMEIND", "SYNGENE",
+    "TATACHEM", "TATACONSUM", "TATAELXSI", "TATAMOTORS",
+    "TATAPOWER", "TATASTEEL", "TCS", "TECHM",
+    "TIINDIA", "TITAN", "TORNTPHARM", "TORNTPOWER",
+    "TRENT", "TVSMOTOR", "ULTRACEMCO", "UNOMINDA",
+    "UPL", "VEDL", "VOLTAS", "WIPRO",
+    "YESBANK", "ZYDUSLIFE"
 ]
-
-# Duplicate symbols automatically removed
-FO_STOCKS = sorted(set(FO_STOCKS))
 
 # ============================================================
 # SETTINGS
 # ============================================================
 
-st.sidebar.header("⚙️ Scanner Settings")
-
-body_threshold = st.sidebar.slider(
-    "Minimum Candle Body %",
-    min_value=50,
-    max_value=100,
-    value=50,
-    step=5
-)
-
-period = st.sidebar.selectbox(
-    "Yahoo Data Period",
-    ["1d", "5d", "1mo"],
-    index=1
-)
-
-st.sidebar.markdown("---")
-
-st.sidebar.write(
-    f"**F&O Stocks Loaded:** {len(FO_STOCKS)}"
-)
+MIN_BODY_PERCENT = 50.0
 
 # ============================================================
-# SESSION STATE
+# SAFE TICKER
 # ============================================================
 
-if "seen_2m" not in st.session_state:
-    st.session_state.seen_2m = set()
-
-if "seen_5m" not in st.session_state:
-    st.session_state.seen_5m = set()
-
-if "signals_2m" not in st.session_state:
-    st.session_state.signals_2m = []
-
-if "signals_5m" not in st.session_state:
-    st.session_state.signals_5m = []
-
-# ============================================================
-# YAHOO SYMBOL
-# ============================================================
-
-def yahoo_symbol(symbol):
-    return symbol + ".NS"
+def get_ticker(symbol):
+    return f"{symbol}.NS"
 
 
 # ============================================================
-# BATCH DOWNLOAD
+# DOWNLOAD DATA
 # ============================================================
 
-@st.cache_data(ttl=30, show_spinner=False)
-def download_batch(symbols, interval, period):
+@st.cache_data(ttl=60, show_spinner=False)
+def download_data(symbol, interval):
 
-    tickers = " ".join(
-        yahoo_symbol(symbol)
-        for symbol in symbols
-    )
+    ticker = get_ticker(symbol)
 
     try:
-
-        data = yf.download(
-            tickers=tickers,
-            period=period,
+        df = yf.download(
+            ticker,
+            period="5d",
             interval=interval,
-            group_by="ticker",
-            auto_adjust=False,
             progress=False,
-            threads=True
+            auto_adjust=False,
+            threads=False
         )
 
-        return data
-
-    except Exception as e:
-
-        return pd.DataFrame()
-
-
-# ============================================================
-# GET INDIVIDUAL STOCK DATA
-# ============================================================
-
-def get_stock_data(batch_data, symbol):
-
-    if batch_data is None or batch_data.empty:
-        return pd.DataFrame()
-
-    ticker = yahoo_symbol(symbol)
-
-    try:
-
-        if isinstance(batch_data.columns, pd.MultiIndex):
-
-            level0 = batch_data.columns.get_level_values(0)
-
-            if ticker in level0:
-
-                df = batch_data[ticker].copy()
-
-            else:
-                return pd.DataFrame()
-
-        else:
-
-            df = batch_data.copy()
-
-        if df.empty:
+        if df is None or df.empty:
             return pd.DataFrame()
 
-        # Required columns
+        # -----------------------------------------
+        # Handle MultiIndex columns
+        # -----------------------------------------
+        if isinstance(df.columns, pd.MultiIndex):
+
+            try:
+                df.columns = df.columns.get_level_values(0)
+            except Exception:
+                df.columns = [
+                    col[0] if isinstance(col, tuple) else col
+                    for col in df.columns
+                ]
+
+        # -----------------------------------------
+        # Standardize column names
+        # -----------------------------------------
+        df.columns = [
+            str(col).strip().capitalize()
+            for col in df.columns
+        ]
+
         required = [
             "Open",
             "High",
             "Low",
-            "Close"
+            "Close",
+            "Volume"
         ]
 
-        for column in required:
-
-            if column not in df.columns:
+        for col in required:
+            if col not in df.columns:
                 return pd.DataFrame()
 
+        df = df[required].copy()
+
+        # -----------------------------------------
+        # Numeric conversion
+        # -----------------------------------------
+        for col in required:
+            df[col] = pd.to_numeric(
+                df[col],
+                errors="coerce"
+            )
+
         df = df.dropna(
-            subset=required
+            subset=[
+                "Open",
+                "High",
+                "Low",
+                "Close"
+            ]
         )
 
         return df
 
     except Exception:
-
         return pd.DataFrame()
 
 
 # ============================================================
-# SIGNAL LOGIC
+# SMA20 CALCULATION
 # ============================================================
 
-def detect_signal(
-    df,
-    symbol,
-    timeframe,
-    body_threshold
-):
-
-    if df.empty:
-        return None
-
-    if len(df) < 25:
-        return None
+def calculate_sma20(df):
 
     df = df.copy()
 
-    # --------------------------------------------------------
-    # SMA20 HIGH / LOW
-    # --------------------------------------------------------
-
-    df["SMA20_HIGH"] = (
+    df["SMA20_High"] = (
         df["High"]
         .rolling(20)
         .mean()
     )
 
-    df["SMA20_LOW"] = (
+    df["SMA20_Low"] = (
         df["Low"]
         .rolling(20)
         .mean()
     )
 
-    # --------------------------------------------------------
-    # Previous candle's established band
-    # --------------------------------------------------------
+    return df
 
-    df["PREV_SMA20_HIGH"] = (
-        df["SMA20_HIGH"]
-        .shift(1)
+
+# ============================================================
+# BODY PERCENTAGE
+# ============================================================
+
+def candle_body_percent(row):
+
+    candle_range = row["High"] - row["Low"]
+
+    if candle_range <= 0:
+        return 0.0
+
+    body = abs(
+        row["Close"] - row["Open"]
     )
 
-    df["PREV_SMA20_LOW"] = (
-        df["SMA20_LOW"]
-        .shift(1)
+    return (
+        body / candle_range
+    ) * 100.0
+
+
+# ============================================================
+# SCAN TIMEFRAME
+# ============================================================
+
+def scan_timeframe(symbol, interval):
+
+    df = download_data(
+        symbol,
+        interval
     )
 
-    # --------------------------------------------------------
-    # Previous close
-    # --------------------------------------------------------
+    if df.empty:
+        return None
 
-    df["PREV_CLOSE"] = (
-        df["Close"]
-        .shift(1)
-    )
+    if len(df) < 21:
+        return None
 
-    # --------------------------------------------------------
-    # Candle body
-    # --------------------------------------------------------
+    df = calculate_sma20(df)
 
-    df["BODY"] = (
-        df["Close"] - df["Open"]
-    ).abs()
-
-    df["RANGE"] = (
-        df["High"] - df["Low"]
-    )
-
-    df["BODY_PERCENT"] = np.where(
-        df["RANGE"] > 0,
-        (df["BODY"] / df["RANGE"]) * 100,
-        0
-    )
-
-    # --------------------------------------------------------
-    # Current completed candle
-    # --------------------------------------------------------
-
+    # -----------------------------------------
+    # Latest completed candle
+    # -----------------------------------------
     row = df.iloc[-1]
 
-    if pd.isna(row["PREV_SMA20_HIGH"]):
+    if pd.isna(row["SMA20_High"]) or pd.isna(
+        row["SMA20_Low"]
+    ):
         return None
 
-    if pd.isna(row["PREV_SMA20_LOW"]):
-        return None
+    open_price = float(row["Open"])
+    high_price = float(row["High"])
+    low_price = float(row["Low"])
+    close_price = float(row["Close"])
 
-    # --------------------------------------------------------
-    # Body filter
-    # --------------------------------------------------------
+    sma20_high = float(row["SMA20_High"])
+    sma20_low = float(row["SMA20_Low"])
 
-    if row["BODY_PERCENT"] < body_threshold:
-        return None
-
-    # ========================================================
-    # IMPORTANT:
-    # Previous candle must be INSIDE the SMA20 band
-    # ========================================================
-
-    previous_inside_band = (
-        row["PREV_CLOSE"] <= row["PREV_SMA20_HIGH"]
-        and
-        row["PREV_CLOSE"] >= row["PREV_SMA20_LOW"]
-    )
-
-    if not previous_inside_band:
-        return None
+    body_percent = candle_body_percent(row)
 
     # ========================================================
-    # BUY BREAKOUT
+    # BREAKOUT
+    # Candle closes above SMA20 High
     # ========================================================
 
-    buy_signal = (
-        row["Close"] > row["PREV_SMA20_HIGH"]
-        and
-        row["Close"] > row["Open"]
+    breakout = (
+        close_price > sma20_high
+        and body_percent >= MIN_BODY_PERCENT
     )
 
     # ========================================================
-    # SELL BREAKDOWN
+    # BREAKDOWN
+    # Candle closes below SMA20 Low
     # ========================================================
 
-    sell_signal = (
-        row["Close"] < row["PREV_SMA20_LOW"]
-        and
-        row["Close"] < row["Open"]
+    breakdown = (
+        close_price < sma20_low
+        and body_percent >= MIN_BODY_PERCENT
     )
 
-    # --------------------------------------------------------
-    # No signal
-    # --------------------------------------------------------
+    # ========================================================
+    # NO SIGNAL
+    # ========================================================
 
-    if not buy_signal and not sell_signal:
+    if not breakout and not breakdown:
         return None
 
-    # --------------------------------------------------------
-    # Signal
-    # --------------------------------------------------------
-
-    signal = (
-        "BUY"
-        if buy_signal
-        else "SELL"
-    )
-
-    candle_time = row.name
-
     # ========================================================
-    # UNIQUE SIGNAL ID
+    # SIGNAL
     # ========================================================
 
-    signal_id = (
-        f"{symbol}|"
-        f"{timeframe}|"
-        f"{candle_time}|"
-        f"{signal}"
+    if breakout:
+
+        signal = "BUY"
+        level = sma20_high
+
+        distance_percent = (
+            (close_price - sma20_high)
+            / sma20_high
+        ) * 100
+
+    else:
+
+        signal = "SELL"
+        level = sma20_low
+
+        distance_percent = (
+            (sma20_low - close_price)
+            / sma20_low
+        ) * 100
+
+    # ========================================================
+    # CANDLE TIME
+    # ========================================================
+
+    candle_time = df.index[-1]
+
+    # Convert timezone-aware timestamp safely
+    try:
+
+        if hasattr(candle_time, "tz") and candle_time.tz is not None:
+            candle_time = candle_time.tz_convert(
+                "Asia/Kolkata"
+            )
+
+    except Exception:
+        pass
+
+    # ========================================================
+    # SIGNAL KEY
+    # ========================================================
+
+    signal_key = (
+        f"{symbol}_{interval}_"
+        f"{candle_time}_{signal}"
     )
+
+    # ========================================================
+    # RESULT
+    # ========================================================
 
     return {
-
-        "Stock": symbol,
-
-        "Timeframe": timeframe,
-
+        "Symbol": symbol,
+        "Timeframe": interval,
         "Signal": signal,
-
-        "Entry": round(
-            float(row["Close"]),
-            2
-        ),
-
-        "Candle Open": round(
-            float(row["Open"]),
-            2
-        ),
-
-        "Candle High": round(
-            float(row["High"]),
-            2
-        ),
-
-        "Candle Low": round(
-            float(row["Low"]),
-            2
-        ),
-
-        "Body %": round(
-            float(row["BODY_PERCENT"]),
-            2
-        ),
-
-        "SMA20 High": round(
-            float(row["PREV_SMA20_HIGH"]),
-            2
-        ),
-
-        "SMA20 Low": round(
-            float(row["PREV_SMA20_LOW"]),
-            2
-        ),
-
         "Candle Time": candle_time,
-
-        "Signal ID": signal_id
+        "Open": round(open_price, 2),
+        "High": round(high_price, 2),
+        "Low": round(low_price, 2),
+        "Close": round(close_price, 2),
+        "SMA20 High": round(sma20_high, 2),
+        "SMA20 Low": round(sma20_low, 2),
+        "Body %": round(body_percent, 2),
+        "Breakout/Breakdown %": round(
+            distance_percent,
+            2
+        ),
+        "Signal Key": signal_key
     }
 
 
 # ============================================================
-# RUN ONE TIMEFRAME SCANNER
+# SCAN ALL STOCKS
 # ============================================================
 
-def scan_timeframe(
-    timeframe,
-    body_threshold,
-    period
-):
+def run_scan(interval):
 
-    results = []
+    signals = []
 
-    # --------------------------------------------------------
-    # ONE BATCH DOWNLOAD
-    # --------------------------------------------------------
-
-    batch_data = download_batch(
-        tuple(FO_STOCKS),
-        timeframe,
-        period
+    progress = st.progress(
+        0,
+        text=f"Scanning {interval}..."
     )
-
-    if batch_data.empty:
-        return results
-
-    progress = st.progress(0)
 
     total = len(FO_STOCKS)
 
-    # --------------------------------------------------------
-    # LOCAL PROCESSING
-    # --------------------------------------------------------
+    for i, symbol in enumerate(FO_STOCKS):
 
-    for index, symbol in enumerate(FO_STOCKS):
-
-        df = get_stock_data(
-            batch_data,
-            symbol
+        result = scan_timeframe(
+            symbol,
+            interval
         )
 
-        if not df.empty:
-
-            signal = detect_signal(
-                df,
-                symbol,
-                timeframe,
-                body_threshold
-            )
-
-            if signal is not None:
-
-                signal_id = signal["Signal ID"]
-
-                # ------------------------------------------------
-                # DUPLICATE CONTROL
-                # ------------------------------------------------
-
-                if timeframe == "2m":
-
-                    if signal_id not in st.session_state.seen_2m:
-
-                        st.session_state.seen_2m.add(
-                            signal_id
-                        )
-
-                        results.append(signal)
-
-                else:
-
-                    if signal_id not in st.session_state.seen_5m:
-
-                        st.session_state.seen_5m.add(
-                            signal_id
-                        )
-
-                        results.append(signal)
+        if result is not None:
+            signals.append(result)
 
         progress.progress(
-            (index + 1) / total
+            (i + 1) / total,
+            text=f"{interval}: {symbol}"
         )
 
     progress.empty()
 
-    return results
+    return signals
 
 
 # ============================================================
-# DISPLAY FUNCTION
+# DISPLAY SIGNALS
 # ============================================================
 
-def display_signals(
-    signals,
-    title
-):
+def display_signals(signals, title):
 
     st.subheader(title)
 
     if not signals:
 
         st.info(
-            "इस scan में कोई नया candidate नहीं मिला।"
+            "अभी कोई नया candidate नहीं मिला।"
         )
 
         return
 
     df = pd.DataFrame(signals)
 
-    # Latest candle first
-    df = df.sort_values(
-        "Candle Time",
-        ascending=False
-    )
+    # -----------------------------------------
+    # Candle Time - SAFE FORMAT
+    # -----------------------------------------
 
-    # Time formatting
-    df["Candle Time"] = (
-        pd.to_datetime(
-            df["Candle Time"]
-        ).strftime(
-            "%d-%m-%Y %H:%M"
+    if "Candle Time" in df.columns:
+
+        df["Candle Time"] = pd.to_datetime(
+            df["Candle Time"],
+            errors="coerce"
         )
-    )
 
-    buy_count = (
-        df["Signal"] == "BUY"
-    ).sum()
+        # Series के लिए .dt जरूरी है
+        df["Candle Time"] = (
+            df["Candle Time"]
+            .dt.strftime("%d-%m-%Y %H:%M")
+        )
 
-    sell_count = (
-        df["Signal"] == "SELL"
-    ).sum()
+    # -----------------------------------------
+    # Latest signal first
+    # -----------------------------------------
 
-    c1, c2, c3 = st.columns(3)
+    if "Candle Time" in df.columns:
 
-    c1.metric(
-        "New Candidates",
-        len(df)
-    )
+        df = df.sort_values(
+            by="Candle Time",
+            ascending=False
+        )
 
-    c2.metric(
-        "BUY",
-        buy_count
-    )
+    # -----------------------------------------
+    # Internal column hide
+    # -----------------------------------------
 
-    c3.metric(
-        "SELL",
-        sell_count
-    )
+    if "Signal Key" in df.columns:
 
-    display_columns = [
-        "Stock",
-        "Timeframe",
-        "Signal",
-        "Entry",
-        "Body %",
-        "SMA20 High",
-        "SMA20 Low",
-        "Candle Time"
-    ]
+        df = df.drop(
+            columns=["Signal Key"]
+        )
+
+    # -----------------------------------------
+    # Display
+    # -----------------------------------------
 
     st.dataframe(
-        df[display_columns],
+        df,
         use_container_width=True,
         hide_index=True
     )
 
-    # --------------------------------------------------------
-    # CSV
-    # --------------------------------------------------------
+    # -----------------------------------------
+    # CSV Download
+    # -----------------------------------------
 
     csv = df.to_csv(
         index=False
     ).encode("utf-8")
 
     st.download_button(
-        "⬇️ Download CSV",
+        label="⬇️ Download CSV",
         data=csv,
         file_name=(
-            "2m_candidates.csv"
-            if title.startswith("2")
-            else "5m_candidates.csv"
+            f"{title.replace(' ', '_')}.csv"
         ),
         mime="text/csv",
-        use_container_width=True
+        key=(
+            f"download_"
+            f"{title.replace(' ', '_')}"
+        )
     )
 
 
 # ============================================================
-# TWO SCAN BUTTONS
+# MAIN CONTROLS
 # ============================================================
 
-col1, col2 = st.columns(2)
+st.sidebar.header("⚙️ Scanner Settings")
 
-# ============================================================
-# 2 MINUTE SCAN
-# ============================================================
-
-with col1:
-
-    if st.button(
-        "🟢 SCAN 2-MINUTE CANDIDATES",
-        type="primary",
-        use_container_width=True
-    ):
-
-        with st.spinner(
-            "188 F&O stocks का 2-minute batch scan हो रहा है..."
-        ):
-
-            new_signals = scan_timeframe(
-                "2m",
-                body_threshold,
-                period
-            )
-
-        if new_signals:
-
-            st.session_state.signals_2m.extend(
-                new_signals
-            )
-
-        st.success(
-            f"{len(new_signals)} नए 2-minute candidate मिले।"
-        )
-
-
-# ============================================================
-# 5 MINUTE SCAN
-# ============================================================
-
-with col2:
-
-    if st.button(
-        "🔴 SCAN 5-MINUTE CANDIDATES",
-        type="primary",
-        use_container_width=True
-    ):
-
-        with st.spinner(
-            "188 F&O stocks का 5-minute batch scan हो रहा है..."
-        ):
-
-            new_signals = scan_timeframe(
-                "5m",
-                body_threshold,
-                period
-            )
-
-        if new_signals:
-
-            st.session_state.signals_5m.extend(
-                new_signals
-            )
-
-        st.success(
-            f"{len(new_signals)} नए 5-minute candidate मिले।"
-        )
-
-
-# ============================================================
-# RESULTS
-# ============================================================
-
-st.divider()
-
-display_signals(
-    st.session_state.signals_2m,
-    "🟢 2-Minute Candidates"
+min_body = st.sidebar.number_input(
+    "Minimum Candle Body %",
+    min_value=1.0,
+    max_value=100.0,
+    value=50.0,
+    step=1.0
 )
 
-st.divider()
+MIN_BODY_PERCENT = min_body
 
-display_signals(
-    st.session_state.signals_5m,
-    "🔴 5-Minute Candidates"
+st.sidebar.write(
+    f"F&O Stocks: {len(FO_STOCKS)}"
+)
+
+st.sidebar.write(
+    "2m + 5m SMA20 Breakout / Breakdown"
 )
 
 # ============================================================
-# CLEAR SIGNAL HISTORY
+# SCAN BUTTON
 # ============================================================
-
-st.divider()
 
 if st.button(
-    "🗑️ Clear Signal History",
+    "🔄 Run Scanner",
     use_container_width=True
 ):
 
-    st.session_state.seen_2m.clear()
-    st.session_state.seen_5m.clear()
+    # ========================================================
+    # 2 MINUTE
+    # ========================================================
 
-    st.session_state.signals_2m.clear()
-    st.session_state.signals_5m.clear()
+    with st.spinner(
+        "2-Minute scan चल रहा है..."
+    ):
 
-    st.rerun()
+        signals_2m = run_scan(
+            "2m"
+        )
 
-
-# ============================================================
-# LOGIC INFORMATION
-# ============================================================
-
-with st.expander("ℹ️ Scanner Logic"):
-
-    st.markdown(
-        """
-### 2-Minute Candidate
-
-1. F&O stock का 2-minute data batch में download होगा।
-2. `SMA20 High = High का 20-period SMA`
-3. `SMA20 Low = Low का 20-period SMA`
-4. Previous candle का Close SMA20 High और SMA20 Low के बीच होना चाहिए।
-5. Current candle SMA20 High के ऊपर Close करे → **BUY Candidate**
-6. Current candle SMA20 Low के नीचे Close करे → **SELL Candidate**
-7. Candle body कम से कम configured percentage होनी चाहिए।
-8. Default = **50% body**
-9. एक ही candle का signal दोबारा नहीं दिखेगा।
-
-### 5-Minute Candidate
-
-ऊपर की वही conditions लागू होंगी, लेकिन केवल **5-minute candles** पर।
-
-### Duplicate Control
-
-Signal की unique identity:
-
-`Stock + Timeframe + Candle Time + Signal`
-
-इसलिए Streamlit refresh या दोबारा scan करने पर
-उसी candle का वही signal duplicate नहीं होगा।
-"""
+    display_signals(
+        signals_2m,
+        "⏱️ 2-Minute Signals"
     )
 
+    st.divider()
 
-st.caption(
-    f"F&O Universe: {len(FO_STOCKS)} stocks | "
-    f"Last Updated: {datetime.now().strftime('%d-%m-%Y %H:%M:%S')}"
-)
+    # ========================================================
+    # 5 MINUTE
+    # ========================================================
+
+    with st.spinner(
+        "5-Minute scan चल रहा है..."
+    ):
+
+        signals_5m = run_scan(
+            "5m"
+        )
+
+    display_signals(
+        signals_5m,
+        "⏱️ 5-Minute Signals"
+    )
+
+else:
+
+    st.info(
+        "Scanner शुरू करने के लिए "
+        "ऊपर **🔄 Run Scanner** button दबाएँ।"
+    )
